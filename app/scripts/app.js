@@ -9,7 +9,6 @@
  * Main module of the application.
  */
 
- alert("boot");
 angular.module("geosApp", [
     'ngAnimate',
     'ngCookies',
@@ -20,5 +19,6 @@ angular.module("geosApp", [
     'firebase',
     'firebase.ref',
     'firebase.auth',
-    'uiGmapgoogle-maps'
+    'uiGmapgoogle-maps',
+    'angularGeoFire'
   ]);

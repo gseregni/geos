@@ -61,19 +61,6 @@ angular.module('geosApp')
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
-
-      .when('/chat', {
-        templateUrl: 'views/chat.html',
-        controller: 'ChatCtrl'
-      })
-      .when('/login', {
-        templateUrl: 'views/login.html',
-        controller: 'LoginCtrl'
-      })
-      .whenAuthenticated('/account', {
-        templateUrl: 'views/account.html',
-        controller: 'AccountCtrl'
-      })
       .otherwise({redirectTo: '/'});
   }])
 
