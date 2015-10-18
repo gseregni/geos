@@ -19,7 +19,7 @@ angular.module('geosApp')
             	console.log(center.G," - ", center.K);
             	query.updateCriteria({
 				  center: [center.G, center.K],
-				  radius: 5
+				  radius: 200
 				});
                 // $scope.$apply(function () {
                 // 	console.log("map ", map.getCenter());
@@ -43,7 +43,7 @@ angular.module('geosApp')
     // Setup a GeoQuery
     var query = $geo.$query({
         center: [45, -73],
-        radius: 2000
+        radius: 200
     });
 
     // // Setup Angular Broadcast event for when an object enters our query
@@ -57,15 +57,20 @@ angular.module('geosApp')
         $scope.searchResults.push({key: key, location: location, distance: distance});
 
         // Cancel the query if the distance is > 5 km
-        if(distance > 5) {
-            geoQueryCallback.cancel();
-        }
+        // if(distance > 5) {
+        //     geoQueryCallback.cancel();
+        // }
     });
 
 
     $scope.$on("SEARCH:KEY_EXITED", function (event, key, location, distance) {
         // Do something interesting with object
         console.log("key exited", key);
+        for (var x = 0; x < $scope.searchResults.length; x++) {
+        	if ($scope.searchResults[x].key == key) {
+        		$scope.searchResults.splice(x, 1);
+        	}	
+        }
         // $scope.searchResults.push({key: key, location: location, distance: distance});
 
         // Cancel the query if the distance is > 5 km
