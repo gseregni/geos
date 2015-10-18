@@ -1,0 +1,55 @@
+<div class="col col-sm-5 hidden-xs">
+      <ui-gmap-google-map center="map.center" zoom="map.zoom" events="map.events" draggable="true">
+        <marker ng-repeat="card in markers | orderBy:'infoId'" click="showCard(card)"
+        coords="card.geolocation">
+          <marker-label content="card.title" anchor="22 0" class="marker-labels"></marker-label>
+        </marker>
+      </ui-gmap-google-map>
+    </div>
+    <div class="col col-sm-7" style="height: 100%; overflow-y:scroll">
+      <div class="row" style="position:fixed;z-index:1000;background-color:#ad68ab;width:57%;">
+        <div class="col col-xs-5">
+          <h4>
+            <br>
+            <br>
+          </h4>
+        </div>
+        <div class="col col-xs-7 text-right">
+          <div class="btn-group">
+            <a class="btn btn-default color3" ng-click="openContactModal()">Contatta i {{visibleMarkers.length}} asili trovati</a>
+          </div>
+        </div>
+      </div>
+      <div class="row " style="padding-top: 60px;">
+        <div ng-if="visibleMarkers.length == 0">
+          <p>Nessun risultato trovato.
+            <a ng-click="zoomOut()">Clicca qui</a>per ampliare la zona di ricerca.</p>
+        </div>
+        <div class="col col-sm-6 col-md-4" ng-repeat="card in visibleMarkers | orderBy:'title'">
+          <div class="thumbnail" style="min-height:340px;">
+            <img style="max-height:120px;" ng-src="{{card.image}}" class="img-responsive">
+            <div class="caption">
+              <h4>{{card.name}}</h4>
+              <p>{{card.address}}</p>
+              <ul class="list-unstyled">
+                <b>{{card.properties.tipo}}</b>
+              </ul>
+              <a href="#!/asili/{{card.id}}" ng-class="{'disabled': card.disabled}"
+              class="btn btn-block btn-primary color3" draggable="true">Maggiori informazioni</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <!-- <ul class="pager">
+            <li ng-class="{'disabled': page == 1}">
+              <a href="#" ng-click="previousPage()" >←  Prec</a>
+            </li>
+            <li>
+              <a href="#" ng-click="nextPage()">Succ  →</a>
+            </li>
+          </ul> -->
+        </div>
+      </div>
+    </div>
