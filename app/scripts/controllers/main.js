@@ -10,40 +10,42 @@
 angular.module('geosApp')
   .controller('MainCtrl', function ($scope, $geofire, uiGmapGoogleMapApi) {
     
+    var mapInstance = null;
+
   	$scope.map = { 
 		center: { latitude: 45, longitude: -73 }, 
 		zoom: 8,
 		events: {
-            tilesloaded: function (map) {
-            	var center  = map.getCenter();
-            	console.log(center.G," - ", center.K);
+            tilesloaded: function(map) {
+            	// here we can get the map instance
+            	mapInstance = map;
+            },
+            dragend : function() {
+            	// if map is not here, give up
+            	if(!mapInstance) return;
+            	var center  = mapInstance.getCenter();
             	query.updateCriteria({
 				  center: [center.G, center.K],
-				  radius: 200
+				  radius: 100
 				});
-                // $scope.$apply(function () {
-                // 	console.log("map ", map.getCenter());
-                //     $scope.mapInstance = map;
-
-                // });
             }
         }
   	};
 
-     $scope.searchResults = [];
+    $scope.searchResults = [];
 
     var $geo = $geofire(new Firebase('https://skeleton-firebase.firebaseio.com/thecareworld/geos'));
 
-    // Trivial example of inserting some data and querying data
-    $geo.$set("tre", [45,-73])
-        .catch(function(err) {
-            $log.error(err);
-        });
+    // // Trivial example of inserting some data and querying data
+    // $geo.$set("tre", [45,-73])
+    //     .catch(function(err) {
+    //         $log.error(err);
+    //     });
 
     // Setup a GeoQuery
     var query = $geo.$query({
         center: [45, -73],
-        radius: 200
+        radius: 100
     });
 
     // // Setup Angular Broadcast event for when an object enters our query
@@ -55,11 +57,6 @@ angular.module('geosApp')
         // Do something interesting with object
         console.log("key entered", key);
         $scope.searchResults.push({key: key, location: location, distance: distance});
-
-        // Cancel the query if the distance is > 5 km
-        // if(distance > 5) {
-        //     geoQueryCallback.cancel();
-        // }
     });
 
 
@@ -71,26 +68,7 @@ angular.module('geosApp')
         		$scope.searchResults.splice(x, 1);
         	}	
         }
-        // $scope.searchResults.push({key: key, location: location, distance: distance});
-
-        // Cancel the query if the distance is > 5 km
-        // if(distance > 5) {
-        //     geoQueryCallback.cancel();
-        // }
     });
 
 
   });
-
-
-
-// angular.module('geosApp')
-//   .controller('AccountCtrl', function ($scope, user, Auth, Ref, $firebaseObject) {
-//     $scope.user = user;
-//     $scope.logout = function() { Auth.$unauth(); };
-//     $scope.messages = [];
-//     var profile = $firebaseObject(Ref.child('users/'+user.uid));
-//     profile.$bindTo($scope, 'profile');
-    
-
-//   });
