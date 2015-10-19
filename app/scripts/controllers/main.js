@@ -11,6 +11,39 @@ angular.module('geosApp')
   .controller('MainCtrl', function ($scope, $geofire, uiGmapGoogleMapApi) {
     
     var mapInstance = null;
+    $scope.coords = {
+            latitude: 45,
+            longitude: -73
+          }
+
+    var mapChanged = function() {
+        if(!mapInstance) return;
+        var center  = mapInstance.getCenter();
+       
+
+        var bounds = mapInstance.getBounds();
+
+        var center = bounds.getCenter();
+        var ne = bounds.getNorthEast();
+
+        // r = radius of the earth in statute miles
+        var r = 3963.0;  
+
+        // Convert lat or lng from decimal degrees into radians (divide by 57.2958)
+        var lat1 = center.lat() / 57.2958; 
+        var lon1 = center.lng() / 57.2958;
+        var lat2 = ne.lat() / 57.2958;
+        var lon2 = ne.lng() / 57.2958;
+
+        // distance = circle radius from center to Northeast corner of bounds
+        var dis = r * Math.acos(Math.sin(lat1) * Math.sin(lat2) + 
+          Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));
+        console.log(dis);
+         query.updateCriteria({
+          center: [center.G, center.K],
+          radius: dis
+        });
+    };
 
   	$scope.map = { 
 		center: { latitude: 45, longitude: -73 }, 
@@ -20,15 +53,8 @@ angular.module('geosApp')
             	// here we can get the map instance
             	mapInstance = map;
             },
-            dragend : function() {
-            	// if map is not here, give up
-            	if(!mapInstance) return;
-            	var center  = mapInstance.getCenter();
-            	query.updateCriteria({
-				  center: [center.G, center.K],
-				  radius: 100
-				});
-            }
+            zoom_changed : mapChanged,
+            dragend : mapChanged
         }
   	};
 
@@ -37,7 +63,7 @@ angular.module('geosApp')
     var $geo = $geofire(new Firebase('https://skeleton-firebase.firebaseio.com/thecareworld/geos'));
 
     // // Trivial example of inserting some data and querying data
-    // $geo.$set("tre", [45,-73])
+    // $geo.$set("6", [45,-72])
     //     .catch(function(err) {
     //         $log.error(err);
     //     });
@@ -56,7 +82,11 @@ angular.module('geosApp')
     $scope.$on("SEARCH:KEY_ENTERED", function (event, key, location, distance) {
         // Do something interesting with object
         console.log("key entered", key);
-        $scope.searchResults.push({key: key, location: location, distance: distance});
+        // convert geo format from geofire to angular google maps
+        var latlang = {latitude: location[0], longitude: location[1]};
+        $scope.searchResults.push({key: key, location: latlang, distance: distance});
+        console.log("ADD ", $scope.searchResults);
+        $scope.$digest();
     });
 
 
@@ -69,6 +99,8 @@ angular.module('geosApp')
         	}	
         }
     });
+
+
 
 
   });

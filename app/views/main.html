@@ -1,5 +1,12 @@
 <div class="col col-sm-5 hidden-xs">
       <ui-gmap-google-map center="map.center" zoom="map.zoom" events="map.events" draggable="true">
+        <ui-gmap-marker
+          ng-repeat="m in searchResults"
+          idKey='m.key'
+          coords='m.location'
+        >
+      </ui-gmap-marker>
+
         <marker ng-repeat="card in markers | orderBy:'infoId'" click="showCard(card)"
         coords="card.geolocation">
           <marker-label content="card.title" anchor="22 0" class="marker-labels"></marker-label>
