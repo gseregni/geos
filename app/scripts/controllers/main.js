@@ -8,19 +8,18 @@
  * Controller of the geosApp
  */
 angular.module('geosApp')
-  .controller('MainCtrl', function ($scope, $geofire, Ref, uiGmapGoogleMapApi) {
+  .controller('MainCtrl', function ($scope, $routeParams, Ref, uiGmapGoogleMapApi) {
     console.log("mainctrl");
+    var query = null;
     var mapInstance = null;
-    $scope.coords = {
-            latitude: 45,
-            longitude: -73
-          }
+    // $scope.coords = {
+    //         latitude: 45,
+    //         longitude: -73
+    //       }
 
     var mapChanged = function() {
         if(!mapInstance) return;
         var center  = mapInstance.getCenter();
-       
-
         var bounds = mapInstance.getBounds();
 
         var center = bounds.getCenter();
@@ -38,11 +37,15 @@ angular.module('geosApp')
         // distance = circle radius from center to Northeast corner of bounds
         var dis = r * Math.acos(Math.sin(lat1) * Math.sin(lat2) + 
           Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));
-        console.log(dis);
-         query.updateCriteria({
-          center: [center.G, center.K],
-          radius: dis
-        });
+         
+         if (query) {
+            console.log("center ", center);
+            query.updateCriteria({
+              center: [center.lat(), center.lng()],
+              radius: dis
+            });   
+         }
+         
     };
 
   	$scope.map = { 
@@ -51,68 +54,89 @@ angular.module('geosApp')
 		events: {
             tilesloaded: function(map) {
             	// here we can get the map instance
-            	mapInstance = map;
-                console.log("loaded");
+                if ($scope.map._ready)
+                    return;
+                $scope.map._ready = true;
+                mapInstance = map;
+                // bad, geocode can come before of this map
+                if ($routeParams.location) {
+                    // geocoder load async and notify using global callback functions. bad
+                    var geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({'address': $routeParams.location}, function(results, status) {
+                        if (status === google.maps.GeocoderStatus.OK) {
+                            if (!mapInstance)
+                                mapInstance = results[0].geometry.location;
+                            else {
+
+                                mapInstance.setCenter(results[0].geometry.location);
+                                mapChanged();
+                                setupGeo([mapInstance.center.lat(), mapInstance.center.lng()]);
+                                // map.setCenter(mapInstance);
+                            }
+
+                        } else {
+                          alert('Geocode was not successful.' + status);
+                        }
+                      });
+                }
+                
+
+                    
+                    
+            	
             },
             zoom_changed : mapChanged,
             dragend : mapChanged
         }
   	};
 
-    $scope.searchResults = [];
-    var geo = new GeoFire(new Firebase('https://skeleton-firebase.firebaseio.com/thecareworld/geos'));
+    $scope.doSearch = function() {
+        window.location.hash = "#/search/" + $scope.search;
+    }
 
-    // var $geo = $geofire();
-
-    // // Trivial example of inserting some data and querying data
-    // $geo.$set("6", [45,-72])
-    //     .catch(function(err) {
-    //         $log.error(err);
-    //     });
-
-    // Setup a GeoQuery
-    var query = geo.query({
-        center: [45, -73],
-        radius: 100
-    });
-
-    setTimeout(function() {
-        query.updateCriteria({
-          center: [45, -73],
-        radius: 100
-        });
-    },2000);
     
-    query.on("key_entered", function (key, location, distance) {
-        // search card corresponding to just entered geo        
-        var fredRef = Ref.child('thecareworld/cards/' + key);
-        console.log("query", 'thecareworld/cards/' + key);
-        fredRef.once("value", function(snapshot) {
-                console.log("RESULT ",  snapshot);
-            
-            var m = snapshot.val();
 
-            if(!m)
-                return;
-            var latlang = {latitude: location[0], longitude: location[1]};
-            m.location = latlang;
-            m.key = key;
-            $scope.$apply(function() {
-                $scope.searchResults.push(m);
-            });
-            
+    $scope.searchResults = [];
+
+    var setupGeo = function(center) {
+
+        var geo = new GeoFire(new Firebase('https://skeleton-firebase.firebaseio.com/thecareworld/geos'));
+        query = geo.query({
+            center: center,
+            radius: 100
         });
-    });
 
 
-    query.on("key_exited",function (key, location, distance) {
-        for (var x = 0; x < $scope.searchResults.length; x++) {
-        	if ($scope.searchResults[x].key == key) {
-        		$scope.searchResults.splice(x, 1);
-        	}	
-        }
-    });
+        query.on("key_entered", function (key, location, distance) {
+            // search card corresponding to just entered geo        
+            var fredRef = Ref.child('thecareworld/cards/' + key);
+            console.log("query", 'thecareworld/cards/' + key);
+            fredRef.once("value", function(snapshot) {
+                    console.log("RESULT ",  snapshot);
+                
+                var m = snapshot.val();
 
+                if(!m)
+                    return;
+                var latlang = {latitude: location[0], longitude: location[1]};
+                m.location = latlang;
+                m.key = key;
+                $scope.$apply(function() {
+                    $scope.searchResults.push(m);
+                });
+                
+            });
+        });
+
+
+        query.on("key_exited",function (key, location, distance) {
+            for (var x = 0; x < $scope.searchResults.length; x++) {
+            	if ($scope.searchResults[x].key == key) {
+            		$scope.searchResults.splice(x, 1);
+            	}	
+            }
+        });
+    }
 
 
 

@@ -39,6 +39,8 @@ module.exports = function(config) {
       'bower_components/rsvp/rsvp.js',
       'bower_components/geofire/dist/geofire.js',
       'bower_components/AngularGeoFire/src/angularGeoFire.js',
+      'bower_components/geocoder-service/geocoder-service.js',
+      'bower_components/geocoder-service/geocoder-service.min.js',
       'bower_components/mockfirebase/browser/mockfirebase.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower

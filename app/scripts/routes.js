@@ -61,6 +61,10 @@ angular.module('geosApp')
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
+      .when('/search/:location', {
+        templateUrl: 'views/main.html',
+        controller: 'MainCtrl'
+      })
       .when('/card/:cardId', {
         templateUrl: 'views/card.html',
         controller: 'CardCtrl'
