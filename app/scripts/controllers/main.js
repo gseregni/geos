@@ -60,8 +60,9 @@ angular.module('geosApp')
   	};
 
     $scope.searchResults = [];
+    var geo = new GeoFire(new Firebase('https://skeleton-firebase.firebaseio.com/thecareworld/geos'));
 
-    var $geo = $geofire(new Firebase('https://skeleton-firebase.firebaseio.com/thecareworld/geos'));
+    // var $geo = $geofire();
 
     // // Trivial example of inserting some data and querying data
     // $geo.$set("6", [45,-72])
@@ -70,7 +71,7 @@ angular.module('geosApp')
     //     });
 
     // Setup a GeoQuery
-    var query = $geo.$query({
+    var query = geo.query({
         center: [45, -73],
         radius: 100
     });
@@ -82,22 +83,8 @@ angular.module('geosApp')
         });
     },2000);
     
-    // // Setup Angular Broadcast event for when an object enters our query
-    // var geoQueryCallback = query.on("key_entered", "SEARCH:KEY_ENTERED");
-    query.on("key_entered", "SEARCH:KEY_ENTERED");
-
-
-     $scope.$on('$destroy', function() {
-      });
-
-
-    var geoQueryCallback = query.on("key_exited", "SEARCH:KEY_EXITED");
-
-    // // Listen for Angular Broadcast
-    $scope.$on("SEARCH:KEY_ENTERED", function (event, key, location, distance) {
-        // Do something interesting with object
-        console.log("key entered", key);
-
+    query.on("key_entered", function (key, location, distance) {
+        // search card corresponding to just entered geo        
         var fredRef = Ref.child('thecareworld/cards/' + key);
         console.log("query", 'thecareworld/cards/' + key);
         fredRef.once("value", function(snapshot) {
@@ -118,9 +105,7 @@ angular.module('geosApp')
     });
 
 
-    $scope.$on("SEARCH:KEY_EXITED", function (event, key, location, distance) {
-        // Do something interesting with object
-        console.log("key exited", key);
+    query.on("key_exited",function (key, location, distance) {
         for (var x = 0; x < $scope.searchResults.length; x++) {
         	if ($scope.searchResults[x].key == key) {
         		$scope.searchResults.splice(x, 1);
