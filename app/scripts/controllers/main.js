@@ -8,8 +8,8 @@
  * Controller of the geosApp
  */
 angular.module('geosApp')
-  .controller('MainCtrl', function ($scope, $geofire, uiGmapGoogleMapApi) {
-    
+  .controller('MainCtrl', function ($scope, $geofire, Ref, uiGmapGoogleMapApi) {
+    console.log("mainctrl");
     var mapInstance = null;
     $scope.coords = {
             latitude: 45,
@@ -52,6 +52,7 @@ angular.module('geosApp')
             tilesloaded: function(map) {
             	// here we can get the map instance
             	mapInstance = map;
+                console.log("loaded");
             },
             zoom_changed : mapChanged,
             dragend : mapChanged
@@ -74,19 +75,46 @@ angular.module('geosApp')
         radius: 100
     });
 
+    setTimeout(function() {
+        query.updateCriteria({
+          center: [45, -73],
+        radius: 100
+        });
+    },2000);
+    
     // // Setup Angular Broadcast event for when an object enters our query
-    var geoQueryCallback = query.on("key_entered", "SEARCH:KEY_ENTERED");
+    // var geoQueryCallback = query.on("key_entered", "SEARCH:KEY_ENTERED");
+    query.on("key_entered", "SEARCH:KEY_ENTERED");
+
+
+     $scope.$on('$destroy', function() {
+      });
+
+
     var geoQueryCallback = query.on("key_exited", "SEARCH:KEY_EXITED");
 
     // // Listen for Angular Broadcast
     $scope.$on("SEARCH:KEY_ENTERED", function (event, key, location, distance) {
         // Do something interesting with object
         console.log("key entered", key);
-        // convert geo format from geofire to angular google maps
-        var latlang = {latitude: location[0], longitude: location[1]};
-        $scope.searchResults.push({key: key, location: latlang, distance: distance});
-        console.log("ADD ", $scope.searchResults);
-        $scope.$digest();
+
+        var fredRef = Ref.child('thecareworld/cards/' + key);
+        console.log("query", 'thecareworld/cards/' + key);
+        fredRef.once("value", function(snapshot) {
+                console.log("RESULT ",  snapshot);
+            
+            var m = snapshot.val();
+
+            if(!m)
+                return;
+            var latlang = {latitude: location[0], longitude: location[1]};
+            m.location = latlang;
+            m.key = key;
+            $scope.$apply(function() {
+                $scope.searchResults.push(m);
+            });
+            
+        });
     });
 
 

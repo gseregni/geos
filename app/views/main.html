@@ -7,9 +7,6 @@
         >
       </ui-gmap-marker>
 
-        <marker ng-repeat="card in markers | orderBy:'infoId'" click="showCard(card)"
-        coords="card.geolocation">
-          <marker-label content="card.title" anchor="22 0" class="marker-labels"></marker-label>
         </marker>
       </ui-gmap-google-map>
     </div>
@@ -36,12 +33,12 @@
           <div class="thumbnail" style="min-height:340px;">
             <img style="max-height:120px;" ng-src="{{card.image}}" class="img-responsive">
             <div class="caption">
-              <h4>{{card.key}}</h4>
+              <h4>{{card.title}}</h4>
               <p>{{card.address}}</p>
               <ul class="list-unstyled">
                 <b>{{card.properties.tipo}}</b>
               </ul>
-              <a href="#!/asili/{{card.id}}" ng-class="{'disabled': card.disabled}"
+              <a href="#/card/{{card.key}}" ng-class="{'disabled': card.disabled}"
               class="btn btn-block btn-primary color3" draggable="true">Maggiori informazioni</a>
             </div>
           </div>
