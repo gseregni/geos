@@ -37,9 +37,10 @@ angular.module('geosApp')
         // distance = circle radius from center to Northeast corner of bounds
         var dis = r * Math.acos(Math.sin(lat1) * Math.sin(lat2) + 
           Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));
-         
+            
+            console.log(dis);
+
          if (query) {
-            console.log("center ", center);
             query.updateCriteria({
               center: [center.lat(), center.lng()],
               radius: dis
@@ -68,8 +69,8 @@ angular.module('geosApp')
                             mapInstance.setCenter(results[0].geometry.location);
                             mapInstance.fitBounds(results[0].geometry.viewport);
                             mapChanged();
-
-                            var ne = results[0].geometry.viewport.getNorthEast();
+                            // var ne = results[0].geometry.viewport.getNorthEast();
+                            var ne = mapInstance.getBounds().getNorthEast();
                             var r = 3963.0;
 
                             // Convert lat or lng from decimal degrees into radians (divide by 57.2958)
@@ -82,6 +83,7 @@ angular.module('geosApp')
                               Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));
 
                             setupGeo([mapInstance.center.lat(), mapInstance.center.lng()], dis);
+
 
                         } else {
                           alert('Geocode was not successful.' + status);
@@ -109,13 +111,13 @@ angular.module('geosApp')
 
     $scope.searchResults = [];
 
-    var setupGeo = function(center) {
+    var setupGeo = function(center, dist) {
 
         var geo = new GeoFire(new Firebase('https://skeleton-firebase.firebaseio.com/thecareworld/geos'));
-
+        console.log("SETUP GEO " , center , " " , dist);
         query = geo.query({
             center: center,
-            radius: 100
+            radius: dist
         });
 
 
