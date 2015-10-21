@@ -64,15 +64,32 @@ angular.module('geosApp')
                     var geocoder = new google.maps.Geocoder();
                     geocoder.geocode({'address': $routeParams.location}, function(results, status) {
                         if (status === google.maps.GeocoderStatus.OK) {
-                            if (!mapInstance)
-                                mapInstance = results[0].geometry.location;
-                            else {
+                            // if (!mapInstance)
+                            //     mapInstance = results[0].geometry.location;
+                            // else {
 
                                 mapInstance.setCenter(results[0].geometry.location);
+                                mapInstance.fitBounds(results[0].geometry.viewport);
                                 mapChanged();
-                                setupGeo([mapInstance.center.lat(), mapInstance.center.lng()]);
+
+                                console.log("viewport " , results[0].geometry.viewport.getNorthEast().lat());
+                                var ne = results[0].geometry.viewport.getNorthEast();
+                                 // r = radius of the earth in statute miles
+                                var r = 3963.0;  
+
+                                // Convert lat or lng from decimal degrees into radians (divide by 57.2958)
+                                var lat1 = mapInstance.center.lat() / 57.2958; 
+                                var lon1 = mapInstance.center.lng() / 57.2958;
+                                var lat2 = ne.lat() / 57.2958;
+                                var lon2 = ne.lng() / 57.2958;
+
+                                // // distance = circle radius from center to Northeast corner of bounds
+                                var dis = r * Math.acos(Math.sin(lat1) * Math.sin(lat2) + 
+                                  Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));
+
+                                setupGeo([mapInstance.center.lat(), mapInstance.center.lng()], dis);
                                 // map.setCenter(mapInstance);
-                            }
+                            // }
 
                         } else {
                           alert('Geocode was not successful.' + status);
@@ -101,6 +118,7 @@ angular.module('geosApp')
     var setupGeo = function(center) {
 
         var geo = new GeoFire(new Firebase('https://skeleton-firebase.firebaseio.com/thecareworld/geos'));
+
         query = geo.query({
             center: center,
             radius: 100
