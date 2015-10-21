@@ -29,6 +29,7 @@
           ng-repeat="m in searchResults"
           idKey='m.key'
           coords='m.location'
+          options='m.options'
         >
       </ui-gmap-marker>
 
@@ -55,7 +56,7 @@
             <a ng-click="zoomOut()">Clicca qui</a>per ampliare la zona di ricerca.</p>
         </div>
         <div class="col col-sm-6 col-md-4" ng-repeat="card in searchResults | orderBy:'title'">
-          <div class="thumbnail" style="min-height:340px;">
+          <div class="thumbnail" style="min-height:340px;" ng-mouseover="highlightMarker(card)" ng-mouseleave="unhighlightMarker(card)">
             <img style="max-height:120px;" ng-src="{{card.image}}" class="img-responsive">
             <div class="caption">
               <h4>{{card.name}}</h4>
