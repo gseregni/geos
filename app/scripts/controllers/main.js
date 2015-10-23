@@ -206,47 +206,98 @@ angular.module('geosApp')
 
     $scope.activeFilters = [];
 
+    var matchFilters = function(card) {
+        console.log("MATCH ", $scope.activeFilters);
+        for (var x = 0; x < $scope.activeFilters.length; x++) {
+            var f = $scope.activeFilters[x];
+            var tags = card.tags.split(",");
+            if (tags.indexOf(f) == -1)
+                continue;
+            return true;
+        }
+        return false;
+    }
+
 
     $scope.filter = function (card) { 
         if ($scope.activeFilters.length == 0)
             return true;
-        console.log("non zero");
-        if (card.tags && card.tags.indexOf($scope.activeFilters[0]) > -1)
-            return true;    
-        else
-            return false;
+        
+        return matchFilters(card);    
+        
     };
 
-    $scope.setFirstFilter = function(key) {
-        var wasHere = false;
-        if ($scope.activeFilters.indexOf(key) > -1)
-            wasHere = true;
+    var computeActiveFilter = function() {
+        var activeFilters = [];
+        var firstActive = [];
+        var secondActive = [];
+
+        for (var k in $scope.filtersFirst) {
+            if ($scope.filtersFirst[k].checked) {
+                firstActive.push(k);
+            }
+        }
+
+        for (var k in $scope.filtersSecond) {
+            if ($scope.filtersSecond[k].checked) {
+                secondActive.push(k);
+            }
+        }
+
+
+        for (var k in $scope.filtersFirst) {
+            if (firstActive.length == 0 || $scope.filtersFirst[k].checked) {
+                console.log("first ", k);
+                for (var k2 in $scope.filtersSecond) {
+                    if (secondActive.length == 0 || $scope.filtersSecond[k2].checked) {
+                        activeFilters.push(k + "/" + k2);    
+                    }
+                }
+            }
+        }
+        // for (var x = 0; x < firstActive.length; x++) {
+        //     for (var k2 in $scope.filtersSecond) {
+        //         if ($scope.filtersSecond.length == 0 || $scope.filtersSecond[k2].checked)
+        //             activeFilters.push(k + "/" + k2);
+        //     }    
+        // }
+        
+        $scope.activeFilters = activeFilters;
+        console.log("filter " , activeFilters);
+    };
+
+    $scope.setFirstFilter = function(key, e) {
+        // var wasHere = false;
+        // if ($scope.activeFilters.indexOf(key) > -1)
+        //     wasHere = true;
+
 
         for (var k in $scope.filtersFirst) {
             $scope.filtersFirst[k].checked = false;
         }
-        $scope.filtersFirst[key].checked = true;
-        if (!wasHere)
-            $scope.activeFilters = [key];
-        else
-            $scope.activeFilters = [];
+
+        // bad to use event... should use angular logic instead
+        if (e.target.checked)
+            $scope.filtersFirst[key].checked = true;
+
+        computeActiveFilter();
+        // if (!wasHere)
+        //     $scope.activeFilters = [key];
+        // else
+        //     $scope.activeFilters = [];
     }
 
-    $scope.setSecondFilter = function(key) {
-        var wasHere = false;
-        if ($scope.activeFilters.indexOf(key) > -1)
-            wasHere = true;
 
+    $scope.setSecondFilter = function(key, e) {
         for (var k in $scope.filtersSecond) {
             $scope.filtersSecond[k].checked = false;
         }
-        $scope.filtersSecond[key].checked = true;
-        if (!wasHere)
-            $scope.activeFilters = [key];
-        else
-            $scope.activeFilters = [];
-    }
+        // bad to use event... should use angular logic instead
+        if(e.target.checked)
+            $scope.filtersSecond[key].checked = true;
 
+        computeActiveFilter();
+    }   
 
 
   });
