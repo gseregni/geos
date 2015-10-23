@@ -67,7 +67,7 @@
           <p>Nessun risultato trovato.
             <a ng-click="zoomOut()">Clicca qui</a>per ampliare la zona di ricerca.</p>
         </div>
-        <div class="col col-sm-6 col-md-4" ng-repeat="card in searchResults | orderBy:'title'">
+        <div class="col col-sm-6 col-md-4" ng-repeat="card in searchResults | orderBy:'title' | filter : filter">
           <div class="thumbnail" style="min-height:340px;" ng-mouseover="highlightMarker(card)" ng-mouseleave="unhighlightMarker(card)">
             <img style="max-height:120px;" ng-src="{{card.image}}" class="img-responsive">
             <div class="caption">

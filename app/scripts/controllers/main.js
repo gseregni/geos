@@ -206,13 +206,43 @@ angular.module('geosApp')
     });
 
     $scope.activeFilters = [];
+    // $scope.$watch('activeFilters', function() {
+    //     console.log("changed active filtersFirst ");
+
+    //     for (var x = 0; x < $scope.searchResults.length; x++) {
+    //         var card = $scope.searchResults[x];
+    //         if ($scope.activeFilters.length = 0)
+    //             card.visible = true;
+    //         else {
+
+    //         }
+    //     }
+    // });
+
+
+    $scope.filter = function (card) { 
+        if ($scope.activeFilters.length == 0)
+            return true;
+        console.log("non zero");
+        if (card.tags && card.tags.indexOf($scope.activeFilters[0]) > -1)
+            return true;    
+        else
+            return false;
+    };
 
     $scope.setFirstFilter = function(key) {
+        var wasHere = false;
+        if ($scope.activeFilters.indexOf(key) > -1)
+            wasHere = true;
+
         for (var k in $scope.filtersFirst) {
             $scope.filtersFirst[k].checked = false;
         }
         $scope.filtersFirst[key].checked = true;
-        $scope.activeFilters = []
+        if (!wasHere)
+            $scope.activeFilters = [key];
+        else
+            $scope.activeFilters = [];
     }
 
 
