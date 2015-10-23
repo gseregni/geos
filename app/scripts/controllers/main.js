@@ -100,6 +100,31 @@ angular.module('geosApp')
         window.location.hash = "#/search/" + $scope.search;
     }
 
+    $scope.clickMarker = function(card) {
+        alert("card");
+        var map = mapInstance;
+        var scale = Math.pow(2, map.getZoom());
+        var nw = new google.maps.LatLng(
+            map.getBounds().getNorthEast().lat(),
+            map.getBounds().getSouthWest().lng()
+        );
+        var worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
+        
+        var worldCoordinate = map.getProjection().fromLatLngToPoint(card.location);
+        var pixelOffset = new google.maps.Point(
+            Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale),
+            Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale)
+        );
+        $("#map-popup").show();
+        $("#map-popup").css("position", "absolute");
+        var y = Number(pixelOffset.y );
+        var x = Number(pixelOffset.x + 20);
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
+        $("#map-popup").css("top", y + "px");
+        $("#map-popup").css("left", x + "px");
+    }
+
     $scope.highlightMarker = function(card) {
         card.options = { animation: 1 };
     }
@@ -149,6 +174,45 @@ angular.module('geosApp')
             	}	
             }
         });
+    }
+
+
+    /* FILTERS */
+    // fill on start
+    var tagsRef = Ref.child('thecareworld/config/tags');
+    tagsRef.once("value", function(snapshot) {
+        var tags = snapshot.val();
+        var filtersFirst = {};
+        var filtersSecond = {};
+        for (var x = 0; x < tags.length; x++) {
+            if (!tags[x])
+                continue;
+            console.log(tags[x]);
+            var split = tags[x].split("/");
+            // if (filtersFirst.[split[0]])
+            filtersFirst[split[0]] = {checked: false};
+            // filtersFirst.push({label: split[0], checked: false});
+
+            // if (filtersSecond.indexOf(split[1]) == -1)
+            //     filtersSecond.push(split[1]);
+        }
+
+        $scope.$apply(function() {
+            $scope.filtersFirst = filtersFirst;
+            $scope.filtersSecond = filtersSecond;
+        });
+
+        console.log();
+    });
+
+    $scope.activeFilters = [];
+
+    $scope.setFirstFilter = function(key) {
+        for (var k in $scope.filtersFirst) {
+            $scope.filtersFirst[k].checked = false;
+        }
+        $scope.filtersFirst[key].checked = true;
+        $scope.activeFilters = []
     }
 
 

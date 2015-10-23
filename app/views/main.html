@@ -21,23 +21,22 @@
         </div>
       </div>
 
-    <div class="container">
-
-<div class="col col-sm-5 hidden-xs">
-      <ui-gmap-google-map center="map.center" zoom="map.zoom" events="map.events" draggable="true">
-        <ui-gmap-marker
-          ng-repeat="m in searchResults"
-          idKey='m.key'
-          coords='m.location'
-          options='m.options'
-        >
-      </ui-gmap-marker>
-
-        </marker>
-      </ui-gmap-google-map>
+    <div class="container-fluid">
+    
+    <div id="map-popup" class="bgform popover fade in">
+      <img width="640" height="480" src="{{popupCard.image}}" class="img-responsive">
+      <div class="caption">
+        <h5>
+          <a ng-href="#!/asilo/{{encodeName(popupCard.name)}}/{{popupCard.id}}"
+          class="color1">{{popupCard.name}}</a>
+        </h5>
+        <p>{{popupCard.address}}</p>
+      </div>
     </div>
+
+    
     <div class="col col-sm-7" style="height: 100%; overflow-y:scroll">
-      <div class="row" style="position:fixed;z-index:1000;background-color:#ad68ab;width:57%;">
+      <!--<div class="row" style="position:fixed;z-index:1000;background-color:#ad68ab;width:57%;">
         <div class="col col-xs-5">
           <h4>
             <br>
@@ -48,6 +47,19 @@
           <div class="btn-group">
             <a class="btn btn-default color3" ng-click="openContactModal()">Contatta i {{visibleMarkers.length}} asili trovati</a>
           </div>
+        </div>
+      </div>-->
+      <div class="row">
+        <div class="btn-group">
+           <label class="btn" ng-repeat="(k,v) in filtersFirst">
+              <input class="" type="checkbox" value="1"  ng-checked="v.checked" name="" ng-click="setFirstFilter(k)"> {{k}}
+          </label>
+        </div>
+        &nbsp;&nbsp;&nbsp;
+        <div class="btn-group">
+           <label class="btn" ng-repeat="f in filtersSecond">
+              <input class="" type="checkbox" value="1"  name="" id="test_test_1"> {{f}}
+          </label>
         </div>
       </div>
       <div class="row " style="padding-top: 60px;">
@@ -82,6 +94,20 @@
           </ul> -->
         </div>
       </div>
+    </div>
+    <div class="col col-sm-5 hidden-xs">
+      <ui-gmap-google-map center="map.center" zoom="map.zoom" events="map.events" draggable="true">
+        <ui-gmap-marker
+          ng-repeat="m in searchResults"
+          idKey='m.key'
+          coords='m.location'
+          options='m.options'
+          click="clickMarker(m)"
+        >
+      </ui-gmap-marker>
+
+        </marker>
+      </ui-gmap-google-map>
     </div>
 
     </div>
