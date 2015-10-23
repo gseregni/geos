@@ -57,8 +57,8 @@
         </div>
         &nbsp;&nbsp;&nbsp;
         <div class="btn-group">
-           <label class="btn" ng-repeat="f in filtersSecond">
-              <input class="" type="checkbox" value="1"  name="" id="test_test_1"> {{f}}
+           <label class="btn" ng-repeat="(k,v) in filtersSecond">
+              <input class="" type="checkbox" value="1" ng-checked="v.checked" name="" ng-click="setSecondFilter(k)"> {{k}}
           </label>
         </div>
       </div>

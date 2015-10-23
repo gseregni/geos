@@ -193,8 +193,7 @@ angular.module('geosApp')
             filtersFirst[split[0]] = {checked: false};
             // filtersFirst.push({label: split[0], checked: false});
 
-            // if (filtersSecond.indexOf(split[1]) == -1)
-            //     filtersSecond.push(split[1]);
+                filtersSecond[split[1]] = {checked: false};
         }
 
         $scope.$apply(function() {
@@ -206,18 +205,6 @@ angular.module('geosApp')
     });
 
     $scope.activeFilters = [];
-    // $scope.$watch('activeFilters', function() {
-    //     console.log("changed active filtersFirst ");
-
-    //     for (var x = 0; x < $scope.searchResults.length; x++) {
-    //         var card = $scope.searchResults[x];
-    //         if ($scope.activeFilters.length = 0)
-    //             card.visible = true;
-    //         else {
-
-    //         }
-    //     }
-    // });
 
 
     $scope.filter = function (card) { 
@@ -239,6 +226,21 @@ angular.module('geosApp')
             $scope.filtersFirst[k].checked = false;
         }
         $scope.filtersFirst[key].checked = true;
+        if (!wasHere)
+            $scope.activeFilters = [key];
+        else
+            $scope.activeFilters = [];
+    }
+
+    $scope.setSecondFilter = function(key) {
+        var wasHere = false;
+        if ($scope.activeFilters.indexOf(key) > -1)
+            wasHere = true;
+
+        for (var k in $scope.filtersSecond) {
+            $scope.filtersSecond[k].checked = false;
+        }
+        $scope.filtersSecond[key].checked = true;
         if (!wasHere)
             $scope.activeFilters = [key];
         else
