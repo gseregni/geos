@@ -49,7 +49,7 @@
           </div>
         </div>
       </div>-->
-      <div class="row">
+      <div class="row" ng-if="!showFilter">
         <div class="btn-group">
            <label class="btn" ng-repeat="(k,v) in filtersFirst">
               <input class="" type="checkbox" value="1"  ng-checked="v.checked" name="" ng-click="setFirstFilter(k, $event)"> {{k}}
@@ -61,6 +61,32 @@
               <input class="" type="checkbox" value="1" ng-checked="v.checked" name="" ng-click="setSecondFilter(k, $event)"> {{k}}
           </label>
         </div>
+        <label class="btn pull-right">
+              <input class="" type="checkbox" value="1"  ng-checked="v.checked" name="" ng-click="moreFilters()"> Più filtri
+          </label>
+            
+        </a>
+      </div>
+      <div class="row" ng-if="showFilter" >
+        Kind 
+        <div class="btn-group">
+           <label class="btn" ng-repeat="(k,v) in filtersFirst">
+              <input class="" type="checkbox" value="1"  ng-checked="v.checked" name="" ng-click="setFirstFilter(k, $event)"> {{k}}
+          </label>
+        </div>
+        <br>
+        Kind 2 
+        <div class="btn-group">
+           <label class="btn" ng-repeat="(k,v) in filtersSecond">
+              <input class="" type="checkbox" value="1" ng-checked="v.checked" name="" ng-click="setSecondFilter(k, $event)"> {{k}}
+          </label>
+        </div>
+        <br>
+        <ul>
+          <li ng-repeat="(k,v) in filtersThird">{{k}}</li>
+        </ul>
+        <br>
+        <a class="btn">Applica</a>
       </div>
       <div class="row " style="padding-top: 60px;">
         <div ng-if="visibleMarkers.length == 0">
@@ -98,7 +124,7 @@
     <div class="col col-sm-5 hidden-xs">
       <ui-gmap-google-map center="map.center" zoom="map.zoom" events="map.events" draggable="true">
         <ui-gmap-marker
-          ng-repeat="m in searchResults"
+          ng-repeat="m in searchResults | filter : filter"
           idKey='m.key'
           coords='m.location'
           options='m.options'

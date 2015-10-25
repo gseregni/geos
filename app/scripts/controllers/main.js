@@ -184,6 +184,7 @@ angular.module('geosApp')
         var tags = snapshot.val();
         var filtersFirst = {};
         var filtersSecond = {};
+        var filtersThird = {};
         for (var x = 0; x < tags.length; x++) {
             if (!tags[x])
                 continue;
@@ -192,13 +193,15 @@ angular.module('geosApp')
             // if (filtersFirst.[split[0]])
             filtersFirst[split[0]] = {checked: false};
             // filtersFirst.push({label: split[0], checked: false});
-
-                filtersSecond[split[1]] = {checked: false};
+            filtersSecond[split[1]] = {checked: false};
+            if (split[2])
+                filtersThird[tags[x]] = {checked: false}
         }
 
         $scope.$apply(function() {
             $scope.filtersFirst = filtersFirst;
             $scope.filtersSecond = filtersSecond;
+            $scope.filtersThird = filtersThird;
         });
 
         console.log();
@@ -267,11 +270,6 @@ angular.module('geosApp')
     };
 
     $scope.setFirstFilter = function(key, e) {
-        // var wasHere = false;
-        // if ($scope.activeFilters.indexOf(key) > -1)
-        //     wasHere = true;
-
-
         for (var k in $scope.filtersFirst) {
             $scope.filtersFirst[k].checked = false;
         }
@@ -281,10 +279,6 @@ angular.module('geosApp')
             $scope.filtersFirst[key].checked = true;
 
         computeActiveFilter();
-        // if (!wasHere)
-        //     $scope.activeFilters = [key];
-        // else
-        //     $scope.activeFilters = [];
     }
 
 
@@ -299,5 +293,13 @@ angular.module('geosApp')
         computeActiveFilter();
     }   
 
+
+    $scope.moreFilters = function() {
+        $scope.showFilter = true;
+    }
+
+    $scope.applyFilters = function() {
+        $scope.showFilter = false;
+    }
 
   });
