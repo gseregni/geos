@@ -49,16 +49,16 @@
           </div>
         </div>
       </div>-->
-      <div class="row" ng-if="!showFilter">
+      <div class="row">
         <div class="btn-group">
            <label class="btn" ng-repeat="(k,v) in filtersFirst">
-              <input class="" type="checkbox" value="1"  ng-checked="v.checked" name="" ng-click="setFirstFilter(k, $event)"> {{k}}
+              <input class="" type="radio" value="1"  ng-checked="v.checked" name="" ng-click="setFirstFilter(k, $event)"> {{k}}
           </label>
         </div>
         &nbsp;&nbsp;&nbsp;
         <div class="btn-group">
            <label class="btn" ng-repeat="(k,v) in filtersSecond">
-              <input class="" type="checkbox" value="1" ng-checked="v.checked" name="" ng-click="setSecondFilter(k, $event)"> {{k}}
+              <input class="" type="radio" value="1" ng-checked="v.checked" name="" ng-click="setSecondFilter(k, $event)"> {{k}}
           </label>
         </div>
         <label class="btn pull-right">
@@ -68,7 +68,7 @@
         </a>
       </div>
       <div class="row" ng-if="showFilter" >
-        Kind 
+        <!-- Kind 
         <div class="btn-group">
            <label class="btn" ng-repeat="(k,v) in filtersFirst">
               <input class="" type="checkbox" value="1"  ng-checked="v.checked" name="" ng-click="setFirstFilter(k, $event)"> {{k}}
@@ -80,13 +80,19 @@
            <label class="btn" ng-repeat="(k,v) in filtersSecond">
               <input class="" type="checkbox" value="1" ng-checked="v.checked" name="" ng-click="setSecondFilter(k, $event)"> {{k}}
           </label>
+        </div> 
+        <br>-->
+        <br>
+        <div class="row" ng-repeat="row in activeFiltersThird.chunk(2)">
+          <div class="col-sm-6" ng-repeat="filter in row">
+              <label class="btn">
+                <input class="" type="checkbox" value="1"  name="">
+                {{formatFilterName(filter)}}
+              </label>
+          </div>
         </div>
         <br>
-        <ul>
-          <li ng-repeat="(k,v) in filtersThird">{{k}}</li>
-        </ul>
-        <br>
-        <a class="btn">Applica</a>
+        <!-- <a class="btn">Applica</a> -->
       </div>
       <div class="row " style="padding-top: 60px;">
         <div ng-if="visibleMarkers.length == 0">

@@ -139,7 +139,10 @@ angular.module('geosApp')
     var setupGeo = function(center, dist) {
 
         var geo = new GeoFire(new Firebase('https://skeleton-firebase.firebaseio.com/thecareworld/geos'));
-        console.log("SETUP GEO " , center , " " , dist);
+        
+        console.log("!!!SETUP GEO " , center , " " , dist);
+
+
         query = geo.query({
             center: center,
             radius: dist
@@ -188,7 +191,6 @@ angular.module('geosApp')
         for (var x = 0; x < tags.length; x++) {
             if (!tags[x])
                 continue;
-            console.log(tags[x]);
             var split = tags[x].split("/");
             // if (filtersFirst.[split[0]])
             filtersFirst[split[0]] = {checked: false};
@@ -199,18 +201,40 @@ angular.module('geosApp')
         }
 
         $scope.$apply(function() {
+            
+            filtersFirst[Object.keys(filtersFirst)[0]].checked = true;
+            filtersSecond[Object.keys(filtersSecond)[0]].checked = true;
+
             $scope.filtersFirst = filtersFirst;
             $scope.filtersSecond = filtersSecond;
             $scope.filtersThird = filtersThird;
         });
+
+        computeActiveFilter();
 
         console.log();
     });
 
     $scope.activeFilters = [];
 
+
+    Array.prototype.chunk = function(chunkSize) {
+    var array=this;
+    return [].concat.apply([],
+        array.map(function(elem,i) {
+            return i%chunkSize ? [] : [array.slice(i,i+chunkSize)];
+        })
+    );
+}
+
+    $scope.formatFilterName = function(name) {
+         return name.replace($scope.activeFilters[0], "");
+    }
+
     var matchFilters = function(card) {
-        console.log("MATCH ", $scope.activeFilters);
+        if (!card.tags)
+            return true;
+
         for (var x = 0; x < $scope.activeFilters.length; x++) {
             var f = $scope.activeFilters[x];
             var tags = card.tags.split(",");
@@ -223,8 +247,8 @@ angular.module('geosApp')
 
 
     $scope.filter = function (card) { 
-        if ($scope.activeFilters.length == 0)
-            return true;
+        // if ($scope.activeFilters.length == 0)
+        //     return true;
         
         return matchFilters(card);    
         
@@ -266,6 +290,15 @@ angular.module('geosApp')
         // }
         
         $scope.activeFilters = activeFilters;
+        $scope.activeFiltersThird = [];
+
+        for (var k in $scope.filtersThird) {
+            console.log("K " , k , " - ", $scope.activeFilters[0]);
+            if (k.indexOf($scope.activeFilters[0]) == 0)
+                $scope.activeFiltersThird.push(k);
+            // [k] = $scope.filtersThird[k];        
+        }
+
         console.log("filter " , activeFilters);
     };
 
@@ -275,8 +308,8 @@ angular.module('geosApp')
         }
 
         // bad to use event... should use angular logic instead
-        if (e.target.checked)
-            $scope.filtersFirst[key].checked = true;
+        // if (e.target.checked)
+        $scope.filtersFirst[key].checked = true;
 
         computeActiveFilter();
     }
@@ -287,15 +320,18 @@ angular.module('geosApp')
             $scope.filtersSecond[k].checked = false;
         }
         // bad to use event... should use angular logic instead
-        if(e.target.checked)
-            $scope.filtersSecond[key].checked = true;
+        // if(e.target.checked)
+        $scope.filtersSecond[key].checked = true;
 
         computeActiveFilter();
     }   
 
 
     $scope.moreFilters = function() {
-        $scope.showFilter = true;
+        if ($scope.showFilter)
+            $scope.showFilter = false;
+        else
+            $scope.showFilter = true;
     }
 
     $scope.applyFilters = function() {
