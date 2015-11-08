@@ -101,7 +101,7 @@ angular.module('geosApp')
     }
 
     $scope.clickMarker = function(card) {
-        alert("card");
+        window.location.hash = "#/card/" + card.key;
         var map = mapInstance;
         var scale = Math.pow(2, map.getZoom());
         var nw = new google.maps.LatLng(
@@ -140,9 +140,6 @@ angular.module('geosApp')
 
         var geo = new GeoFire(new Firebase('https://skeleton-firebase.firebaseio.com/thecareworld/geos'));
         
-        console.log("!!!SETUP GEO " , center , " " , dist);
-
-
         query = geo.query({
             center: center,
             radius: dist
@@ -152,7 +149,6 @@ angular.module('geosApp')
         query.on("key_entered", function (key, location, distance) {
             // search card corresponding to just entered geo        
             var fredRef = Ref.child('thecareworld/cards/' + key);
-            console.log("query", 'thecareworld/cards/' + key);
             fredRef.once("value", function(snapshot) {
                 
                 var m = snapshot.val();
@@ -212,7 +208,6 @@ angular.module('geosApp')
 
         computeActiveFilter();
 
-        console.log();
     });
 
     $scope.activeFilters = [];
@@ -274,7 +269,6 @@ angular.module('geosApp')
 
         for (var k in $scope.filtersFirst) {
             if (firstActive.length == 0 || $scope.filtersFirst[k].checked) {
-                console.log("first ", k);
                 for (var k2 in $scope.filtersSecond) {
                     if (secondActive.length == 0 || $scope.filtersSecond[k2].checked) {
                         activeFilters.push(k + "/" + k2);    
@@ -293,13 +287,10 @@ angular.module('geosApp')
         $scope.activeFiltersThird = [];
 
         for (var k in $scope.filtersThird) {
-            console.log("K " , k , " - ", $scope.activeFilters[0]);
             if (k.indexOf($scope.activeFilters[0]) == 0)
                 $scope.activeFiltersThird.push(k);
-            // [k] = $scope.filtersThird[k];        
         }
 
-        console.log("filter " , activeFilters);
     };
 
     $scope.setFirstFilter = function(key, e) {
