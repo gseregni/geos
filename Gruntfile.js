@@ -386,7 +386,7 @@ module.exports = function (grunt) {
       ],
       dist: [
         'copy:styles',
-        'imagemin',
+        // 'imagemin',
         'svgmin'
       ]
     },
@@ -453,7 +453,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', [
     // 'newer:jshint',
-    'test',
+    // 'test',
     'build'
   ]);
 };
