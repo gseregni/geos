@@ -27,6 +27,14 @@ module.exports = function (grunt) {
     // Project settings
     yeoman: appConfig,
 
+
+    'gh-pages': {
+      options: {
+        base: 'dist'
+      },
+      src: ['**']
+    },
+
     // Watches files for changes and runs tasks based on the changed files
     watch: {
       bower: {
@@ -393,6 +401,10 @@ module.exports = function (grunt) {
   });
 
 
+  grunt.loadNpmTasks('grunt-gh-pages');
+
+
+
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
@@ -440,7 +452,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('default', [
-    'newer:jshint',
+    // 'newer:jshint',
     'test',
     'build'
   ]);
