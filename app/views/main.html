@@ -68,50 +68,6 @@
           </label>
         </div>
       </div>
-
-      <div class="row">
-        <div class="btn-group">
-           <label class="btn" ng-repeat="(k,v) in filtersFirst">
-              <input class="" type="radio" value="1"  ng-checked="v.checked" name="" ng-click="setFirstFilter(k, $event)"> {{k}}
-          </label>
-        </div>
-        &nbsp;&nbsp;&nbsp;
-        <div class="btn-group">
-           <label class="btn" ng-repeat="(k,v) in filtersSecond">
-              <input class="" type="radio" value="1" ng-checked="v.checked" name="" ng-click="setSecondFilter(k, $event)"> {{k}}
-          </label>
-        </div>
-     
-            
-        </a>
-      </div>
-      <div class="row" ng-if="showFilter" >
-        <!-- Kind 
-        <div class="btn-group">
-           <label class="btn" ng-repeat="(k,v) in filtersFirst">
-              <input class="" type="checkbox" value="1"  ng-checked="v.checked" name="" ng-click="setFirstFilter(k, $event)"> {{k}}
-          </label>
-        </div>
-        <br>
-        Kind 2 
-        <div class="btn-group">
-           <label class="btn" ng-repeat="(k,v) in filtersSecond">
-              <input class="" type="checkbox" value="1" ng-checked="v.checked" name="" ng-click="setSecondFilter(k, $event)"> {{k}}
-          </label>
-        </div> 
-        <br>-->
-        <br>
-        <div class="row" ng-repeat="row in activeFiltersThird.chunk(2)">
-          <div class="col-sm-6" ng-repeat="filter in row">
-              <label class="btn">
-                <input class="" type="checkbox" value="1"  name="">
-                {{formatFilterName(filter)}}
-              </label>
-          </div>
-        </div>
-        <br>
-        <!-- <a class="btn">Applica</a> -->
-      </div>
       <div class="row " style="padding-top: 60px;">
         <div ng-if="visibleMarkers.length == 0">
           <p>Nessun risultato trovato.
