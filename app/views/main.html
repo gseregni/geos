@@ -49,6 +49,26 @@
           </div>
         </div>
       </div>-->
+      <div class="row" style="margin-top: 10px" >
+        <div class="col-sm-12" >
+          <div class="btn-group" style="margin-right: 10px" ng-repeat="(k,filterGroup) in filters| limitTo : 2">
+            <label class="btn" ng-repeat="filter in filterGroup">
+                <input class="" type="checkbox" value="1"  ng-checked="activeFilters[k] == filter" name="" ng-click="setFilter(k, filter)"> {{filter}}
+            </label>
+          </div>
+          <label class="btn pull-right">
+              <input class="" type="checkbox" value="1"  ng-model="showMoreFilters" name=""> Più filtri
+          </label>
+        </div>
+      </div>
+      <div class="row" style="padding: 10px" ng-repeat="(k,filterGroup) in filters" ng-if="k > 1 && showMoreFilters">
+        <div class="btn-group">
+           <label class="btn" ng-repeat="filter in filterGroup">
+              <input class="" type="checkbox" value="1"  ng-checked="activeFilters[k] == filter" name="" ng-click="setFilter(k, filter)"> {{filter}}
+          </label>
+        </div>
+      </div>
+
       <div class="row">
         <div class="btn-group">
            <label class="btn" ng-repeat="(k,v) in filtersFirst">
@@ -61,9 +81,7 @@
               <input class="" type="radio" value="1" ng-checked="v.checked" name="" ng-click="setSecondFilter(k, $event)"> {{k}}
           </label>
         </div>
-        <label class="btn pull-right">
-              <input class="" type="checkbox" value="1"  ng-checked="v.checked" name="" ng-click="moreFilters()"> Più filtri
-          </label>
+     
             
         </a>
       </div>
